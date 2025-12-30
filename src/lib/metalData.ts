@@ -126,11 +126,36 @@ function transformApiData(data: ApiResponse): MetalData {
         changePercent: 0
       })),
       yearly: {
-        '1Y': data.chartData['1Y'] || [],
-        '3Y': data.chartData['3Y'] || [],
-        '5Y': data.chartData['5Y'] || [],
-        '10Y': data.chartData['10Y'] || [],
-        'ALL': data.chartData['ALL'] || []
+        '1Y': (data.chartData['1Y'] || []).map((entry: { date: string; price: number }) => ({
+          date: entry.date,
+          price: entry.price,
+          change: 0,
+          changePercent: 0
+        })),
+        '3Y': (data.chartData['3Y'] || []).map((entry: { date: string; price: number }) => ({
+          date: entry.date,
+          price: entry.price,
+          change: 0,
+          changePercent: 0
+        })),
+        '5Y': (data.chartData['5Y'] || []).map((entry: { date: string; price: number }) => ({
+          date: entry.date,
+          price: entry.price,
+          change: 0,
+          changePercent: 0
+        })),
+        '10Y': (data.chartData['10Y'] || []).map((entry: { date: string; price: number }) => ({
+          date: entry.date,
+          price: entry.price,
+          change: 0,
+          changePercent: 0
+        })),
+        'ALL': (data.chartData['ALL'] || []).map((entry: { date: string; price: number }) => ({
+          date: entry.date,
+          price: entry.price,
+          change: 0,
+          changePercent: 0
+        }))
       }
     }
   };
