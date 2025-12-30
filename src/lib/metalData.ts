@@ -72,8 +72,8 @@ export async function getMetalData(metal: MetalType): Promise<MetalData> {
     };
   } catch (error) {
     console.error(`Error fetching ${metal} data from API:`, error);
-    // Fallback to mock data
-    return getMockMetalData(metal);
+    // Return empty data structure instead of mock data
+    throw error;
   }
 }
 
@@ -97,12 +97,8 @@ export async function getAllMetalsData(): Promise<Record<MetalType, MetalData>> 
     };
   } catch (error) {
     console.error('Error fetching all metals data from API:', error);
-    // Fallback to mock data
-    return {
-      gold: getMockMetalData('gold'),
-      silver: getMockMetalData('silver'),
-      platinum: getMockMetalData('platinum')
-    };
+    // Return empty data instead of mock data
+    throw error;
   }
 }
 
@@ -161,23 +157,14 @@ function transformApiData(data: ApiResponse): MetalData {
   };
 }
 
-// Mock data for fallback (when API fails)
-const mockData: Record<MetalType, MetalData> = {
-  gold: {
-    metal: 'Gold',
+// Empty data structure for error cases
+function getEmptyMetalData(metal: MetalType): MetalData {
+  return {
+    metal: metal.charAt(0).toUpperCase() + metal.slice(1),
     lastUpdated: new Date().toISOString(),
-    rates: [
-      { purity: '24K (999)', price: 6450, unit: '₹/gram', change: 50, changePercent: 0.78 },
-      { purity: '22K (916)', price: 5910, unit: '₹/gram', change: 45, changePercent: 0.77 },
-      { purity: '18K (750)', price: 4840, unit: '₹/gram', change: 35, changePercent: 0.73 },
-    ],
+    rates: [],
     history: {
-      oneMonth: Array.from({ length: 30 }, (_, i) => ({
-        date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        price: 6400 + Math.random() * 100,
-        change: Math.random() * 50 - 25,
-        changePercent: Math.random() * 1 - 0.5,
-      })),
+      oneMonth: [],
       yearly: {
         '1Y': [],
         '3Y': [],
@@ -186,56 +173,5 @@ const mockData: Record<MetalType, MetalData> = {
         'ALL': [],
       },
     },
-  },
-  silver: {
-    metal: 'Silver',
-    lastUpdated: new Date().toISOString(),
-    rates: [
-      { purity: '999', price: 78, unit: '₹/gram', change: 1.2, changePercent: 1.56 },
-      { purity: '925 (Sterling)', price: 72, unit: '₹/gram', change: 1.1, changePercent: 1.55 },
-    ],
-    history: {
-      oneMonth: Array.from({ length: 30 }, (_, i) => ({
-        date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        price: 75 + Math.random() * 5,
-        change: Math.random() * 2 - 1,
-        changePercent: Math.random() * 2 - 1,
-      })),
-      yearly: {
-        '1Y': [],
-        '3Y': [],
-        '5Y': [],
-        '10Y': [],
-        'ALL': [],
-      },
-    },
-  },
-  platinum: {
-    metal: 'Platinum',
-    lastUpdated: new Date().toISOString(),
-    rates: [
-      { purity: '999', price: 3200, unit: '₹/gram', change: -15, changePercent: -0.47 },
-      { purity: '950', price: 3040, unit: '₹/gram', change: -14, changePercent: -0.46 },
-    ],
-    history: {
-      oneMonth: Array.from({ length: 30 }, (_, i) => ({
-        date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        price: 3200 + Math.random() * 100 - 50,
-        change: Math.random() * 30 - 15,
-        changePercent: Math.random() * 1 - 0.5,
-      })),
-      yearly: {
-        '1Y': [],
-        '3Y': [],
-        '5Y': [],
-        '10Y': [],
-        'ALL': [],
-      },
-    },
-  },
-};
-
-// Helper function to get mock data
-function getMockMetalData(metal: MetalType): MetalData {
-  return mockData[metal];
+  };
 }
