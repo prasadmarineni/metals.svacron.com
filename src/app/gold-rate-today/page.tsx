@@ -115,7 +115,7 @@ export default function GoldPage() {
                 </p>
               </div>
             </div>
-            <div className="text-right">
+            <div className="sr-only">
               <p className="text-xs text-gray-500">Last Updated</p>
               <p className="text-sm font-medium text-gray-300">
                 {updateDate.toLocaleTimeString('en-IN', { 

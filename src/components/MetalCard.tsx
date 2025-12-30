@@ -46,7 +46,7 @@ export default function MetalCard({ data, href, gradient, icon }: MetalCardProps
           <span>({isPositive ? '+' : ''}{primaryRate.changePercent.toFixed(2)}%)</span>
         </div>
         
-        <div className="mt-4 text-xs text-gray-400">
+        <div className="sr-only">
           Last updated: {new Date(data.lastUpdated).toLocaleString('en-IN')}
         </div>
         

@@ -54,7 +54,7 @@ export default function Home() {
           Track real-time prices for Gold, Silver, and Platinum in India with historical trends. 
           Get accurate rates across multiple purities with historical data and interactive charts.
         </p>
-        <p className="text-sm text-gray-400">
+        <p className="sr-only">
           Last updated: {metalsData?.gold ? new Date(metalsData.gold.lastUpdated).toLocaleString('en-IN') : 'Loading...'}
         </p>
       </motion.div>
