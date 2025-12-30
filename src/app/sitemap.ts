@@ -13,7 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const istMinute = istTime.getUTCMinutes();
   
   // Determine last update time based on current IST time
-  let lastUpdate = new Date(istTime);
+  const lastUpdate = new Date(istTime);
   lastUpdate.setUTCMilliseconds(0);
   lastUpdate.setUTCSeconds(0);
   

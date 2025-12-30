@@ -1,5 +1,32 @@
 import { MetalData, MetalType } from '@/types';
 
+interface ApiRate {
+  purity: string;
+  price: number;
+  change: number;
+  changePercent: number;
+}
+
+interface ApiHistoryEntry {
+  date: string;
+  price: number;
+  change: number;
+}
+
+interface ApiResponse {
+  name: string;
+  lastUpdated: string;
+  rates: ApiRate[];
+  history: ApiHistoryEntry[];
+  chartData: {
+    '1Y': { date: string; price: number }[];
+    '3Y': { date: string; price: number }[];
+    '5Y': { date: string; price: number }[];
+    '10Y': { date: string; price: number }[];
+    'ALL': { date: string; price: number }[];
+  };
+}
+
 // API URL from environment variable
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://us-central1-metals-svacron-com.cloudfunctions.net/api';
 
@@ -20,7 +47,7 @@ export async function getMetalData(metal: MetalType): Promise<MetalData> {
     return {
       metal: data.name,
       lastUpdated: data.lastUpdated,
-      rates: data.rates.map((rate: any) => ({
+      rates: data.rates.map((rate: ApiRate) => ({
         purity: rate.purity,
         price: rate.price,
         unit: '₹/gram',
@@ -28,7 +55,7 @@ export async function getMetalData(metal: MetalType): Promise<MetalData> {
         changePercent: rate.changePercent
       })),
       history: {
-        oneMonth: data.history.map((entry: any) => ({
+        oneMonth: data.history.map((entry: ApiHistoryEntry) => ({
           date: entry.date,
           price: entry.price,
           change: entry.change,
@@ -80,11 +107,11 @@ export async function getAllMetalsData(): Promise<Record<MetalType, MetalData>> 
 }
 
 // Transform API response to MetalData type
-function transformApiData(data: any): MetalData {
+function transformApiData(data: ApiResponse): MetalData {
   return {
     metal: data.name,
     lastUpdated: data.lastUpdated,
-    rates: data.rates.map((rate: any) => ({
+    rates: data.rates.map((rate: ApiRate) => ({
       purity: rate.purity,
       price: rate.price,
       unit: '₹/gram',
@@ -92,7 +119,7 @@ function transformApiData(data: any): MetalData {
       changePercent: rate.changePercent
     })),
     history: {
-      oneMonth: data.history.map((entry: any) => ({
+      oneMonth: data.history.map((entry: ApiHistoryEntry) => ({
         date: entry.date,
         price: entry.price,
         change: entry.change,
