@@ -71,7 +71,7 @@ export default function MultiPurityHistoryTable({
             <tr>
               <th>Date</th>
               {purities.map((purity, index) => (
-                <th key={index}>{purity.label}</th>
+                <th key={index} className="text-right">{purity.label}</th>
               ))}
             </tr>
           </thead>
@@ -90,8 +90,8 @@ export default function MultiPurityHistoryTable({
                     const isPositive = change >= 0;
                     
                     return (
-                      <td key={purityIndex}>
-                        <div className="flex flex-col">
+                      <td key={purityIndex} className="text-right">
+                        <div className="flex flex-col items-end">
                           <span className="font-semibold">
                             ₹{price.toFixed(2)}
                           </span>

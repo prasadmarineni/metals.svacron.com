@@ -22,10 +22,10 @@ export default function WeightPriceTable({ history, title = "Price by Weight - L
           <thead>
             <tr>
               <th>Date</th>
-              <th>1 gram</th>
-              <th>8 grams</th>
-              <th>10 grams</th>
-              <th>1 KG</th>
+              <th className="text-right">1 gram</th>
+              <th className="text-right">8 grams</th>
+              <th className="text-right">10 grams</th>
+              <th className="text-right">1 KG</th>
             </tr>
           </thead>
           <tbody>
@@ -51,8 +51,8 @@ export default function WeightPriceTable({ history, title = "Price by Weight - L
                       year: 'numeric' 
                     })}
                   </td>
-                  <td>
-                    <div className="flex flex-col">
+                  <td className="text-right">
+                    <div className="flex flex-col items-end">
                       <span className="font-semibold">
                         ₹{price1g.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                       </span>
@@ -61,8 +61,8 @@ export default function WeightPriceTable({ history, title = "Price by Weight - L
                       </span>
                     </div>
                   </td>
-                  <td>
-                    <div className="flex flex-col">
+                  <td className="text-right">
+                    <div className="flex flex-col items-end">
                       <span className="font-semibold">
                         ₹{price8g.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                       </span>
@@ -71,8 +71,8 @@ export default function WeightPriceTable({ history, title = "Price by Weight - L
                       </span>
                     </div>
                   </td>
-                  <td>
-                    <div className="flex flex-col">
+                  <td className="text-right">
+                    <div className="flex flex-col items-end">
                       <span className="font-semibold">
                         ₹{price10g.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                       </span>
@@ -81,8 +81,8 @@ export default function WeightPriceTable({ history, title = "Price by Weight - L
                       </span>
                     </div>
                   </td>
-                  <td>
-                    <div className="flex flex-col">
+                  <td className="text-right">
+                    <div className="flex flex-col items-end">
                       <span className="font-semibold">
                         ₹{price1kg.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                       </span>

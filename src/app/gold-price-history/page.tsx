@@ -191,9 +191,9 @@ export default function GoldPriceHistoryPage() {
               <thead>
                 <tr>
                   <th>Year</th>
-                  <th>Price (24K per 10g)</th>
-                  <th>Year-on-Year Change</th>
-                  <th>Change %</th>
+                  <th className="text-right">Price (24K per 10g)</th>
+                  <th className="text-right">Year-on-Year Change</th>
+                  <th className="text-right">Change %</th>
                 </tr>
               </thead>
               <tbody>
@@ -215,10 +215,10 @@ export default function GoldPriceHistoryPage() {
                           <span className="text-xs text-gray-500 block">{entry.note}</span>
                         )}
                       </td>
-                      <td className="font-bold" style={{ color: GOLD_COLOR }}>
+                      <td className="font-bold text-right" style={{ color: GOLD_COLOR }}>
                         ₹{entry.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                       </td>
-                      <td className={yoyChange ? (isPositive ? 'text-green-400' : 'text-red-400') : 'text-gray-500'}>
+                      <td className={`text-right ${yoyChange ? (isPositive ? 'text-green-400' : 'text-red-400') : 'text-gray-500'}`}>
                         {yoyChange ? (
                           <>
                             {isPositive ? '+' : ''}₹{yoyChange.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
@@ -226,7 +226,7 @@ export default function GoldPriceHistoryPage() {
                           </>
                         ) : '—'}
                       </td>
-                      <td className={yoyChange ? (isPositive ? 'text-green-400' : 'text-red-400') : 'text-gray-500'}>
+                      <td className={`text-right ${yoyChange ? (isPositive ? 'text-green-400' : 'text-red-400') : 'text-gray-500'}`}>
                         {yoyChangePercent ? `${parseFloat(yoyChangePercent) >= 0 ? '+' : ''}${yoyChangePercent}%` : '—'}
                       </td>
                     </tr>

@@ -59,9 +59,9 @@ export default function HistoryTable({ history, title = "30-Day Price History" }
           <thead>
             <tr>
               <th>Date</th>
-              <th>Price (₹/gram)</th>
-              <th>Change (₹)</th>
-              <th>Change (%)</th>
+              <th className="text-right">Price (₹/gram)</th>
+              <th className="text-right">Change (₹)</th>
+              <th className="text-right">Change (%)</th>
             </tr>
           </thead>
           <tbody>
@@ -74,13 +74,13 @@ export default function HistoryTable({ history, title = "30-Day Price History" }
                     month: 'short', 
                     year: 'numeric' 
                   })}</td>
-                  <td className="font-semibold">
+                  <td className="font-semibold text-right">
                     ₹{entry.price.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                   </td>
-                  <td className={isPositive ? 'price-up' : 'price-down'}>
+                  <td className={`text-right ${isPositive ? 'price-up' : 'price-down'}`}>
                     {isPositive ? '+' : ''}{entry.change.toFixed(2)}
                   </td>
-                  <td className={isPositive ? 'price-up' : 'price-down'}>
+                  <td className={`text-right ${isPositive ? 'price-up' : 'price-down'}`}>
                     {isPositive ? '+' : ''}{entry.changePercent.toFixed(2)}%
                   </td>
                 </tr>
