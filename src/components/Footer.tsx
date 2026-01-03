@@ -24,17 +24,20 @@ export default function Footer() {
                 <div className={styles.column}>
                     <h4 className={styles.columnHeader}>Resources</h4>
                     <div className={styles.linkList}>
-                        <a href="/sitemap.xml" className={styles.link} target="_blank">Sitemap</a>
-                        <a href="https://calculators.svacron.com" className={styles.link}>Svacron - Financial Calculators</a>
                         <a href="https://svacron.com" className={styles.link}>Svacron - AI Automation</a>
+                        <a href="https://calculators.svacron.com" className={styles.link}>Svacron - Financial Calculators</a>
+                        <a href="https://metals.svacron.com" className={styles.link}>Svacron - Metal Rates</a>
+                        <a href="https://fileatax.svacron.com" className={styles.link}>Svacron - File your ITR</a>
+              
+                        <a href="/sitemap.xml" className={styles.link} target="_blank">Sitemap</a>
                     </div>
                 </div>
 
                 <div className={styles.column}>
                     <h4 className={styles.columnHeader}>Legal</h4>
                     <div className={styles.linkList}>
-                        <a href="#" className={styles.link}>Privacy Policy</a>
-                        <a href="#" className={styles.link}>Terms of Service</a>
+                        <a href="/privacy" className={styles.link}>Privacy Policy</a>
+                        <a href="/terms" className={styles.link}>Terms of Service</a>
                         <a href="https://svacron.com/contact" className={styles.link}>Contact Us</a>
                     </div>
                 </div>

@@ -80,9 +80,17 @@ export async function getMetalData(metal: MetalType): Promise<MetalData> {
 // Fetch all metals data
 export async function getAllMetalsData(): Promise<Record<MetalType, MetalData>> {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
     const response = await fetch(`${API_BASE_URL}/metals`, {
-      next: { revalidate: 300 } // Revalidate every 5 minutes
+      next: { revalidate: 300 }, // Revalidate every 5 minutes
+      signal: controller.signal,
+      // Add cache and priority hints
+      cache: 'force-cache',
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error('Failed to fetch metals data');
@@ -97,8 +105,12 @@ export async function getAllMetalsData(): Promise<Record<MetalType, MetalData>> 
     };
   } catch (error) {
     console.error('Error fetching all metals data from API:', error);
-    // Return empty data instead of mock data
-    throw error;
+    // Return empty data instead of throwing to prevent blank page
+    return {
+      gold: getEmptyMetalData('gold'),
+      silver: getEmptyMetalData('silver'),
+      platinum: getEmptyMetalData('platinum')
+    };
   }
 }
 

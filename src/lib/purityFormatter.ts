@@ -2,7 +2,7 @@
  * Format purity code to display label
  * Converts numeric purity codes to human-readable labels
  */
-export function formatPurityLabel(purity: string): string {
+export function formatPurityLabel(purity: string, metal?: string): string {
   const purityMap: Record<string, string> = {
     // Gold
     '999': '24K (999)',
@@ -10,7 +10,7 @@ export function formatPurityLabel(purity: string): string {
     '750': '18K (750)',
     '585': '14K (585)',
     
-    // Silver
+    // Silver (999 is "Pure", 925 is "Sterling")
     '925': 'Sterling (925)',
     
     // Platinum
@@ -18,7 +18,27 @@ export function formatPurityLabel(purity: string): string {
     '900': 'Platinum 900'
   };
 
+  // Special case: Silver 999 shows as "Pure (999)"
+  if (metal?.toLowerCase() === 'silver' && purity === '999') {
+    return 'Pure (999)';
+  }
+
   return purityMap[purity] || `${purity} Purity`;
+}
+
+/**
+ * Get unit label based on metal and purity
+ * Silver (all purities): "per 10 gram"
+ * Gold and Platinum: "per gram"
+ */
+export function getUnitLabel(metal: string, purity?: string): string {
+  const lowerMetal = metal.toLowerCase();
+  
+  if (lowerMetal === 'silver') {
+    return 'per 10 gram';
+  }
+  
+  return 'per gram';
 }
 
 /**

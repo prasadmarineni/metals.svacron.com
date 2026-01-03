@@ -1,21 +1,69 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { ChartDataPoint } from '@/types';
+import { HistoryEntry } from '@/types';
 
 interface PriceChartProps {
-  data: Record<string, ChartDataPoint[]>;
+  history: HistoryEntry[];
   metalColor: string;
   metalName: string;
 }
 
-const timeframes = ['1Y', '3Y', '5Y', '10Y', 'ALL'];
+interface ChartPoint {
+  date: string;
+  price: number;
+}
 
-export default function PriceChart({ data, metalColor, metalName }: PriceChartProps) {
+const timeframes = ['1M', '3M', '6M', '1Y', 'ALL'];
+
+// Group data by month and get average price
+function groupByMonth(history: HistoryEntry[], months: number): ChartPoint[] {
+  if (!history || history.length === 0) return [];
+  
+  const now = new Date();
+  const cutoffDate = new Date(now);
+  cutoffDate.setMonth(cutoffDate.getMonth() - months);
+  
+  const filtered = history.filter(h => new Date(h.date) >= cutoffDate);
+  
+  const grouped: Record<string, number[]> = {};
+  
+  filtered.forEach(entry => {
+    const date = new Date(entry.date);
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    if (!grouped[key]) {
+      grouped[key] = [];
+    }
+    grouped[key].push(entry.price);
+  });
+  
+  return Object.entries(grouped)
+    .map(([key, prices]) => {
+      const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+      const [year, month] = key.split('-');
+      const monthName = new Date(parseInt(year), parseInt(month) - 1).toLocaleString('en-IN', { month: 'short', year: '2-digit' });
+      return {
+        date: monthName,
+        price: Math.round(avgPrice * 100) / 100
+      };
+    })
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+export default function PriceChart({ history, metalColor, metalName }: PriceChartProps) {
   const [selectedTimeframe, setSelectedTimeframe] = useState('1Y');
   
-  const chartData = data[selectedTimeframe] || [];
+  const chartData = useMemo(() => {
+    const monthsMap: Record<string, number> = {
+      '1M': 1,
+      '3M': 3,
+      '6M': 6,
+      '1Y': 12,
+      'ALL': 120  // 10 years
+    };
+    return groupByMonth(history, monthsMap[selectedTimeframe] || 12);
+  }, [history, selectedTimeframe]);
   
   return (
     <div className="card">
@@ -60,6 +108,7 @@ export default function PriceChart({ data, metalColor, metalName }: PriceChartPr
                   borderRadius: '8px'
                 }}
                 labelStyle={{ color: '#e5e7eb' }}
+                formatter={(value) => `₹${value}`}
               />
               <Legend />
               <Line 

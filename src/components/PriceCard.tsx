@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { MetalRate } from '@/types';
-import { formatPurityLabel } from '@/lib/purityFormatter';
+import { formatPurityLabel, getUnitLabel } from '@/lib/purityFormatter';
 
 interface PriceCardProps {
   metal: string;
@@ -12,6 +12,7 @@ interface PriceCardProps {
 
 export default function PriceCard({ metal, rate, metalColor }: PriceCardProps) {
   const isPositive = rate.change >= 0;
+  const unitLabel = getUnitLabel(metal, rate.purity);
   
   return (
     <motion.div
@@ -24,7 +25,7 @@ export default function PriceCard({ metal, rate, metalColor }: PriceCardProps) {
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="text-lg font-semibold text-gray-300">{metal}</h3>
-          <p className="text-sm text-gray-400">{formatPurityLabel(rate.purity)}</p>
+          <p className="text-sm text-gray-400">{formatPurityLabel(rate.purity, metal)}</p>
         </div>
         <div className={`text-sm font-medium ${isPositive ? 'price-up' : 'price-down'}`}>
           {isPositive ? '↑' : '↓'} {Math.abs(rate.changePercent).toFixed(2)}%
@@ -35,7 +36,7 @@ export default function PriceCard({ metal, rate, metalColor }: PriceCardProps) {
         <div className="text-3xl font-bold" style={{ color: metalColor }}>
           {rate.unit.startsWith('₹') ? '₹' : ''}{rate.price.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
         </div>
-        <div className="text-sm text-gray-400">per gram</div>
+        <div className="text-sm text-gray-400">{unitLabel}</div>
       </div>
       
       <div className={`text-sm ${isPositive ? 'price-up' : 'price-down'}`}>

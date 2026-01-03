@@ -156,6 +156,10 @@ a {
   background: var(--glass-bg);
 }
 
+.table th.text-right {
+  text-align: right;
+}
+
 .table tr:hover {
   background: var(--glass-bg);
 }

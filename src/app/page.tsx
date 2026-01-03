@@ -24,22 +24,9 @@ export default function Home() {
     fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="container py-20">
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p className="text-gray-400">Loading rates...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="container py-20">
-      {/* Hero Section */}
+      {/* Hero Section - Show immediately */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -54,14 +41,29 @@ export default function Home() {
           Track real-time prices for Gold, Silver, and Platinum in India with historical trends. 
           Get accurate rates across multiple purities with historical data and interactive charts.
         </p>
-        <p className="sr-only">
-          Last updated: {metalsData?.gold ? new Date(metalsData.gold.lastUpdated).toLocaleString('en-IN') : 'Loading...'}
-        </p>
+        {metalsData?.gold && (
+          <p className="sr-only">
+            Last updated: {new Date(metalsData.gold.lastUpdated).toLocaleString('en-IN')}
+          </p>
+        )}
       </motion.div>
 
-      {/* Metal Cards Grid */}
+      {/* Metal Cards Grid - Show skeleton while loading */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-        {metalsData && (
+        {loading ? (
+          <>
+            {/* Skeleton loaders */}
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="card animate-pulse">
+                <div className="h-48 bg-gray-700/50 rounded-lg mb-4"></div>
+                <div className="space-y-3">
+                  <div className="h-6 bg-gray-700/50 rounded w-3/4"></div>
+                  <div className="h-4 bg-gray-700/50 rounded w-1/2"></div>
+                </div>
+              </div>
+            ))}
+          </>
+        ) : metalsData ? (
           <>
             <MetalCard
               data={metalsData.gold}
@@ -82,7 +84,7 @@ export default function Home() {
               icon="💎"
             />
           </>
-        )}
+        ) : null}
       </div>
 
       {/* Info Section */}

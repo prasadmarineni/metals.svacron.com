@@ -24,20 +24,24 @@ export default function WeightPriceTable({ history, title = "Price by Weight - L
               <th>Date</th>
               <th className="text-right">1 gram</th>
               <th className="text-right">8 grams</th>
-              <th className="text-right">10 grams</th>
+              <th className="text-right">100 grams</th>
               <th className="text-right">1 KG</th>
             </tr>
           </thead>
           <tbody>
             {last10Days.map((entry, index) => {
-              const price1g = entry.price;
-              const price8g = entry.price * 8;
-              const price10g = entry.price * 10;
-              const price1kg = entry.price * 1000;
+              var gr1 = entry.price/10;
+              const price1g = gr1;
+              const price8g = gr1 * 8;
+              const price10g = gr1 * 100;
+              const price1kg = gr1 * 1000;
               
-              const change1g = entry.change || 0;
+              var change1g = entry.change || 0;
+              if(change1g != 0) {
+                change1g = change1g / 10;
+              }
               const change8g = change1g * 8;
-              const change10g = change1g * 10;
+              const change10g = change1g * 100;
               const change1kg = change1g * 1000;
               
               const isPositive = change1g >= 0;

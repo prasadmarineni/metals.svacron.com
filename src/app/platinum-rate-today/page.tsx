@@ -31,40 +31,10 @@ export default function PlatinumPage() {
     fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="container py-20">
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-300 mx-auto mb-4"></div>
-            <p className="text-gray-400">Loading platinum rates...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // No need for mock data - using real history data in PriceChart
 
-  if (!platinumData) {
-    return (
-      <div className="container py-20">
-        <div className="text-center text-red-400">
-          <p>Error loading platinum data. Please try again later.</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Generate yearly chart data
-  const chartData: Record<string, ChartDataPoint[]> = {
-    '1Y': generateYearlyData(365, platinumData.rates[0].price),
-    '3Y': generateYearlyData(365 * 3, platinumData.rates[0].price),
-    '5Y': generateYearlyData(365 * 5, platinumData.rates[0].price),
-    '10Y': generateYearlyData(365 * 10, platinumData.rates[0].price),
-    'ALL': generateYearlyData(365 * 15, platinumData.rates[0].price),
-  };
-
-  const updateDate = new Date(platinumData.lastUpdated || new Date().toISOString());
-  const jsonLd = {
+  const updateDate = platinumData ? new Date(platinumData.lastUpdated || new Date().toISOString()) : new Date();
+  const jsonLd = platinumData ? {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": "Platinum Rate Today in India",
@@ -85,48 +55,52 @@ export default function PlatinumPage() {
     },
     "dateModified": platinumData.lastUpdated,
     "updateFrequency": "Daily"
-  };
+  } : undefined;
 
   return (
     <>
       {/* JSON-LD for SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
 
       <div className="container py-20">
         {/* Update Notice for SEO */}
-        <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-gray-400/10 to-gray-500/10 border border-gray-400/20">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">📅</span>
-              <div>
-                <p className="text-sm text-gray-400 mb-1">Updated Daily</p>
-                <p className="text-lg font-semibold text-gray-200">
-                  {updateDate.toLocaleDateString('en-IN', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
+        {platinumData && (
+          <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-gray-400/10 to-gray-500/10 border border-gray-400/20">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">📅</span>
+                <div>
+                  <p className="text-sm text-gray-400 mb-1">Updated Daily</p>
+                  <p className="text-lg font-semibold text-gray-200">
+                    {updateDate.toLocaleDateString('en-IN', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
+                  </p>
+                </div>
+              </div>
+              <div className="sr-only">
+                <p className="text-xs text-gray-500">Last Updated</p>
+                <p className="text-sm font-medium text-gray-300">
+                  {updateDate.toLocaleTimeString('en-IN', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
                   })}
                 </p>
               </div>
             </div>
-            <div className="sr-only">
-              <p className="text-xs text-gray-500">Last Updated</p>
-              <p className="text-sm font-medium text-gray-300">
-                {updateDate.toLocaleTimeString('en-IN', { 
-                  hour: '2-digit', 
-                  minute: '2-digit',
-                  hour12: true 
-                })}
-              </p>
-            </div>
           </div>
-        </div>
+        )}
 
-        {/* Header */}
+        {/* Header - Show immediately */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -145,6 +119,25 @@ export default function PlatinumPage() {
           </p>
         </motion.div>
 
+      {/* Loading State or Price Cards */}
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="card animate-pulse">
+              <div className="h-32 bg-gray-700/50 rounded-lg mb-4"></div>
+              <div className="space-y-3">
+                <div className="h-6 bg-gray-700/50 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-700/50 rounded w-1/2"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : !platinumData ? (
+        <div className="text-center text-red-400 py-12">
+          <p>Error loading platinum data. Please try again later.</p>
+        </div>
+      ) : (
+        <>
       {/* Price Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
         {platinumData.rates.map((rate, index) => (
@@ -180,11 +173,13 @@ export default function PlatinumPage() {
 
       {/* Chart - Moved to last */}
       <div className="mb-12">
-        <PriceChart
-          data={chartData}
-          metalColor={PLATINUM_COLOR}
-          metalName="Platinum"
-        />
+        {platinumData && (
+          <PriceChart
+            history={platinumData.history.oneMonth}
+            metalColor={PLATINUM_COLOR}
+            metalName="Platinum"
+          />
+        )}
       </div>
 
       {/* Info Section */}
@@ -217,6 +212,8 @@ export default function PlatinumPage() {
           </div>
         </div>
       </motion.div>
+        </>
+      )}
     </div>
     </>
   );

@@ -33,40 +33,10 @@ export default function GoldPage() {
     fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="container py-20">
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-            <p className="text-gray-400">Loading gold rates...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // No need for mock data - using real history data in PriceChart
 
-  if (!goldData) {
-    return (
-      <div className="container py-20">
-        <div className="text-center text-red-400">
-          <p>Error loading gold data. Please try again later.</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Generate yearly chart data
-  const chartData: Record<string, ChartDataPoint[]> = {
-    '1Y': generateYearlyData(365, goldData.rates[0].price),
-    '3Y': generateYearlyData(365 * 3, goldData.rates[0].price),
-    '5Y': generateYearlyData(365 * 5, goldData.rates[0].price),
-    '10Y': generateYearlyData(365 * 10, goldData.rates[0].price),
-    'ALL': generateYearlyData(365 * 15, goldData.rates[0].price),
-  };
-
-  const updateDate = new Date(goldData.lastUpdated || new Date().toISOString());
-  const jsonLd = {
+  const updateDate = goldData ? new Date(goldData.lastUpdated || new Date().toISOString()) : new Date();
+  const jsonLd = goldData ? {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": "Gold Rate Today in India",
@@ -87,7 +57,7 @@ export default function GoldPage() {
     },
     "dateModified": goldData.lastUpdated,
     "updateFrequency": "Daily"
-  };
+  } : undefined;
 
   return (
     <>
@@ -99,36 +69,38 @@ export default function GoldPage() {
 
       <div className="container py-20">
         {/* Update Notice for SEO */}
-        <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 border border-yellow-500/20">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">📅</span>
-              <div>
-                <p className="text-sm text-gray-400 mb-1">Updated Daily</p>
-                <p className="text-lg font-semibold text-yellow-400">
-                  {updateDate.toLocaleDateString('en-IN', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
+        {goldData && (
+          <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 border border-yellow-500/20">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">📅</span>
+                <div>
+                  <p className="text-sm text-gray-400 mb-1">Updated Daily</p>
+                  <p className="text-lg font-semibold text-yellow-400">
+                    {updateDate.toLocaleDateString('en-IN', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
+                  </p>
+                </div>
+              </div>
+              <div className="sr-only">
+                <p className="text-xs text-gray-500">Last Updated</p>
+                <p className="text-sm font-medium text-gray-300">
+                  {updateDate.toLocaleTimeString('en-IN', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
                   })}
                 </p>
               </div>
             </div>
-            <div className="sr-only">
-              <p className="text-xs text-gray-500">Last Updated</p>
-              <p className="text-sm font-medium text-gray-300">
-                {updateDate.toLocaleTimeString('en-IN', { 
-                  hour: '2-digit', 
-                  minute: '2-digit',
-                  hour12: true 
-                })}
-              </p>
-            </div>
           </div>
-        </div>
+        )}
 
-        {/* Header */}
+        {/* Header - Show immediately */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -147,6 +119,25 @@ export default function GoldPage() {
           </p>
         </motion.div>
 
+      {/* Loading State or Price Cards */}
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="card animate-pulse">
+              <div className="h-32 bg-gray-700/50 rounded-lg mb-4"></div>
+              <div className="space-y-3">
+                <div className="h-6 bg-gray-700/50 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-700/50 rounded w-1/2"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : !goldData ? (
+        <div className="text-center text-red-400 py-12">
+          <p>Error loading gold data. Please try again later.</p>
+        </div>
+      ) : (
+        <>
       {/* Price Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         {goldData.rates.map((rate, index) => (
@@ -182,11 +173,13 @@ export default function GoldPage() {
 
       {/* Chart - Moved to last */}
       <div className="mb-12">
-        <PriceChart
-          data={chartData}
-          metalColor={GOLD_COLOR}
-          metalName="Gold"
-        />
+        {goldData && (
+          <PriceChart
+            history={goldData.history.oneMonth}
+            metalColor={GOLD_COLOR}
+            metalName="Gold"
+          />
+        )}
       </div>
 
       {/* Info Section */}
@@ -212,6 +205,8 @@ export default function GoldPage() {
           </div>
         </div>
       </motion.div>
+        </>
+      )}
     </div>
     </>
   );
