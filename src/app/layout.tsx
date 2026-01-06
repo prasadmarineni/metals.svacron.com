@@ -120,6 +120,15 @@ export default function RootLayout({
     },
   };
 
+  const faq = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {"@type":"Question","name":"How often are rates updated?","acceptedAnswer":{"@type":"Answer","text":"Rates are updated daily based on market feeds. Our site shows per-gram market rates and historical averages."}},
+      {"@type":"Question","name":"Why does retail price differ from market rate?","acceptedAnswer":{"@type":"Answer","text":"Retail prices include making charges, GST, and retailer margins. Our site shows market spot rates for transparency."}}
+    ]
+  };
+
   return (
     <html lang="en">
       <head>
@@ -127,6 +136,11 @@ export default function RootLayout({
           id="schema-org"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+        />
+        <Script
+          id="faq-org"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }}
         />
         <Script
           async

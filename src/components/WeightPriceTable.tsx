@@ -30,14 +30,14 @@ export default function WeightPriceTable({ history, title = "Price by Weight - L
           </thead>
           <tbody>
             {last10Days.map((entry, index) => {
-              var gr1 = entry.price/10;
+              const gr1 = entry.price / 10;
               const price1g = gr1;
               const price8g = gr1 * 8;
               const price10g = gr1 * 100;
               const price1kg = gr1 * 1000;
-              
-              var change1g = entry.change || 0;
-              if(change1g != 0) {
+
+              let change1g = entry.change || 0;
+              if (change1g !== 0) {
                 change1g = change1g / 10;
               }
               const change8g = change1g * 8;
